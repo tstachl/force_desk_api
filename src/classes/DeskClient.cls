@@ -8,29 +8,78 @@
  */
 global class DeskClient
 {
-    // class variables
-    public String endpoint       { get {
-        if (this.endpoint == null) {
-            if (this.subdomain == null)
-                throw new ConfigurationException('Endpoint and subdomain missing.');
-            this.endpoint = 'https://' + this.subdomain + '.desk.com';
-        }
-        return this.endpoint;
-    } set; }                                    // api endpoint
-    public String subdomain      { get; set; }  // subdomain to build the full endpoint (https://SUBDOMAIN.desk.com)
-    public String username       { get; set; }  // username for the basic auth flow
-    public String password       { get; set; }  // password for the basic auth flow
-    public String token          { get; set; }  // token for the OAuth flow
-    public String tokenSecret    { get; set; }  // token secret for the OAuth flow
-    public String consumerKey    { get; set; }  // consumer key for the OAuth flow
-    public String consumerSecret { get; set; }  // consumer secret for the OAuth flow
+    /**
+	 * The API endpoint.
+	 */
+    public String endpoint
+    {
+    	/**
+    	 * @return String endpoint
+    	 * @throws ConfigurationException
+    	 */
+    	get {
+	        if (this.endpoint == null) {
+	            if (this.subdomain == null)
+	                throw new ConfigurationException('Endpoint and subdomain missing.');
+	            this.endpoint = 'https://' + this.subdomain + '.desk.com';
+	        }
+	        return this.endpoint;
+	    }
+	    set;
+	}
+	
+    /**
+	 * The subdomain to auto-build the endpoint (https://SUBDOMAIN.desk.com).
+	 */
+    public String subdomain      { get; set; }
+    
+    /**
+	 * The Basic Auth username.
+	 */
+    public String username       { get; set; }
+    
+    /**
+	 * The Basic Auth password.
+	 */
+    public String password       { get; set; }
+    
+    /**
+	 * The OAuth token.
+	 */
+    public String token          { get; set; }
+    
+    /**
+	 * The OAuth tokenSecret.
+	 */
+    public String tokenSecret    { get; set; }
+    
+    /**
+	 * The OAuth consumerKey.
+	 */
+    public String consumerKey    { get; set; }
+    
+    /**
+	 * The OAuth consumerSecret.
+	 */
+    public String consumerSecret { get; set; }
+    
+    /**
+	 * The defaultHeaders for all requests.
+	 */
     private Map<String, String> defaultHeaders = new Map<String, String>{
         'User-Agent'           => 'salesforce-desk-client/0.1.0',
         'Accept'               => 'application/json'
     };
     
-    // constructors
+    /**
+	 * Instantiates a new DeskClient.
+	 */
     public DeskClient() {}
+    
+    /**
+	 * Instantiates a new DeskClient and sets the fields.
+	 * @param  options				A map of options to instantiate the DeskClient with.
+	 */
     public DeskClient(Map<String, String> options)
     {
         // if we have options set them
@@ -44,12 +93,27 @@ global class DeskClient
         if (options.containsKey('consumerSecret'))  this.consumerSecret = options.get('consumerSecret');
     }
     
+    /**
+     * Returns a new DeskResource based on the name.
+     * @param  key					The plural name of the resource you require.
+     * @return DeskResource
+     */
     public DeskResource getResource(String key)
+    {
+		return this.findByPath('/api/v2/' + key);
+    }
+    
+    /**
+     * Finds a DeskResource based on the path.
+     * @param  path					The full api path to the resource.
+     * @return DeskResource
+     */
+    public DeskResource findByPath(String path)
     {
         return new DeskResource(new Map<String, Object>{
             '_links' => new Map<String, Object>{
                 'self' => new Map<String, String>{
-                    'href' => '/api/v2/' + key
+                    'href' => path
                 }
             }
         }, this, false);
@@ -57,39 +121,59 @@ global class DeskClient
     
     /**
      * HTTP GET Request methods
+     * @param  path					The full api path to call.
+     * @return HTTPResponse
      */
-    public HTTPResponse get(String uri) { return this.request('GET', uri); }
+    public HTTPResponse get(String path) { return this.request('GET', path); }
     
     /**
      * HTTP POST Request methods
+     * @param  path					The full api path to call.
+     * @param  payload				The string representation of the request body.
+     * @return HTTPResponse
      */
-    public HTTPResponse post(String uri, String payload)
+    public HTTPResponse post(String path, String payload)
     { 
-        return this.request('POST', uri, payload);
+        return this.request('POST', path, payload);
     }
     
     /**
      * HTTP PATCH Request methods
+     * @param  path					The full api path to call.
+     * @param  payload				The string representation of the request body.
+     * @return HTTPResponse
      */
-    public HTTPResponse patch(String uri, String payload)
+    public HTTPResponse patch(String path, String payload)
     { 
-        return this.request('PATCH', uri, payload);
+        return this.request('PATCH', path, payload);
     }
     
     /**
      * HTTP DELETE Request methods
+     * @param  path					The full api path to call.
+     * @return HTTPResponse
      */
-    public HTTPResponse destroy(String uri) { return this.request('DELETE', uri); }
+    public HTTPResponse destroy(String path) { return this.request('DELETE', path); }
     
     /**
-     * Actual request methods.
+     * Different signature for the request method.
+     * @param  method				The method to call.
+     * @param  path					The full api path to call.
+     * @return HTTPResponse
      */
-    public HTTPResponse request(String method, String uri)
+    public HTTPResponse request(String method, String path)
     {
-        return this.request(method, uri, null);
+        return this.request(method, path, null);
     }
     
-    public HTTPResponse request(String method, String uri, String payload)
+    /**
+     * Sends off the actual request.
+     * @param  method				The method to call.
+     * @param  path					The full api path to call.
+     * @param  payload				The string representation of the request body.
+     * @return HTTPResponse
+     */
+    public HTTPResponse request(String method, String path, String payload)
     {
         HTTPRequest req = new HTTPRequest();
         Map<String, String> headers = this.defaultHeaders.clone();
@@ -114,7 +198,7 @@ global class DeskClient
         }
         
         // set the endpoint
-        req.setEndpoint(this.endpoint + uri);
+        req.setEndpoint(this.endpoint + path);
         
         // basic or oauth
         req = this.basicAuthentication(req);
@@ -131,7 +215,11 @@ global class DeskClient
         return rsp;
     }
     
-    // private helper methods
+    /**
+     * Takes a parameter string and returns a map.
+     * @param  paramString				Parameter string delimited by & and = signs.
+     * @return Map<String, String>
+     */
     private Map<String, String> getParams(String paramString)
     {
         Map<String, String> params = new Map<String, String>();
@@ -148,6 +236,11 @@ global class DeskClient
         return params;
     }
     
+    /**
+     * Adds the Basic Auth header to the request.
+     * @param  req						The request that needs to be authorized.
+     * @return HTTPRequest
+     */
     private HTTPRequest basicAuthentication(HTTPRequest req)
     {
         if (String.isNotBlank(this.username) && String.isNotBlank(this.password)) {
@@ -157,6 +250,11 @@ global class DeskClient
         return req;
     }
     
+    /**
+     * Adds the OAuth header to the request.
+     * @param  req						The request that needs to be authorized.
+     * @return HTTPRequest
+     */
     private HTTPRequest signRequest(HTTPRequest req)
     {
         if (String.isNotBlank(this.consumerKey) && String.isNotBlank(this.consumerSecret)
@@ -215,6 +313,8 @@ global class DeskClient
         return req;
     }
     
-    // exception
+    /**
+     * Custom configuration exception class.
+     */
     public class ConfigurationException extends Exception {}
 }
