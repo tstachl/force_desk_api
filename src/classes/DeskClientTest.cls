@@ -1,7 +1,7 @@
 @isTest
 public class DeskClientTest
 {
-	
+    
     public static testMethod void configurationTest()
     {
         DeskClient client;

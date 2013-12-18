@@ -1,7 +1,7 @@
 @isTest
 public class DeskResourceTest
 {
-	
+    
     public static testMethod void constructorTest()
     {
         // can be inited without information

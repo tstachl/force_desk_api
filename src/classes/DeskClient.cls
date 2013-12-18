@@ -9,77 +9,77 @@
 global class DeskClient
 {
     /**
-	 * The API endpoint.
-	 */
+     * The API endpoint.
+     */
     public String endpoint
     {
-    	/**
-    	 * @return String endpoint
-    	 * @throws ConfigurationException
-    	 */
-    	get {
-	        if (this.endpoint == null) {
-	            if (this.subdomain == null)
-	                throw new ConfigurationException('Endpoint and subdomain missing.');
-	            this.endpoint = 'https://' + this.subdomain + '.desk.com';
-	        }
-	        return this.endpoint;
-	    }
-	    set;
-	}
-	
+        /**
+         * @return String endpoint
+         * @throws ConfigurationException
+         */
+        get {
+            if (this.endpoint == null) {
+                if (this.subdomain == null)
+                    throw new ConfigurationException('Endpoint and subdomain missing.');
+                this.endpoint = 'https://' + this.subdomain + '.desk.com';
+            }
+            return this.endpoint;
+        }
+        set;
+    }
+    
     /**
-	 * The subdomain to auto-build the endpoint (https://SUBDOMAIN.desk.com).
-	 */
+     * The subdomain to auto-build the endpoint (https://SUBDOMAIN.desk.com).
+     */
     public String subdomain      { get; set; }
     
     /**
-	 * The Basic Auth username.
-	 */
+     * The Basic Auth username.
+     */
     public String username       { get; set; }
     
     /**
-	 * The Basic Auth password.
-	 */
+     * The Basic Auth password.
+     */
     public String password       { get; set; }
     
     /**
-	 * The OAuth token.
-	 */
+     * The OAuth token.
+     */
     public String token          { get; set; }
     
     /**
-	 * The OAuth tokenSecret.
-	 */
+     * The OAuth tokenSecret.
+     */
     public String tokenSecret    { get; set; }
     
     /**
-	 * The OAuth consumerKey.
-	 */
+     * The OAuth consumerKey.
+     */
     public String consumerKey    { get; set; }
     
     /**
-	 * The OAuth consumerSecret.
-	 */
+     * The OAuth consumerSecret.
+     */
     public String consumerSecret { get; set; }
     
     /**
-	 * The defaultHeaders for all requests.
-	 */
+     * The defaultHeaders for all requests.
+     */
     private Map<String, String> defaultHeaders = new Map<String, String>{
         'User-Agent'           => 'salesforce-desk-client/0.1.0',
         'Accept'               => 'application/json'
     };
     
     /**
-	 * Instantiates a new DeskClient.
-	 */
+     * Instantiates a new DeskClient.
+     */
     public DeskClient() {}
     
     /**
-	 * Instantiates a new DeskClient and sets the fields.
-	 * @param  options				A map of options to instantiate the DeskClient with.
-	 */
+     * Instantiates a new DeskClient and sets the fields.
+     * @param  options                A map of options to instantiate the DeskClient with.
+     */
     public DeskClient(Map<String, String> options)
     {
         // if we have options set them
@@ -95,17 +95,17 @@ global class DeskClient
     
     /**
      * Returns a new DeskResource based on the name.
-     * @param  key					The plural name of the resource you require.
+     * @param  key                    The plural name of the resource you require.
      * @return DeskResource
      */
     public DeskResource getResource(String key)
     {
-		return this.findByPath('/api/v2/' + key);
+        return this.findByPath('/api/v2/' + key);
     }
     
     /**
      * Finds a DeskResource based on the path.
-     * @param  path					The full api path to the resource.
+     * @param  path                    The full api path to the resource.
      * @return DeskResource
      */
     public DeskResource findByPath(String path)
@@ -121,15 +121,15 @@ global class DeskClient
     
     /**
      * HTTP GET Request methods
-     * @param  path					The full api path to call.
+     * @param  path                    The full api path to call.
      * @return HTTPResponse
      */
     public HTTPResponse get(String path) { return this.request('GET', path); }
     
     /**
      * HTTP POST Request methods
-     * @param  path					The full api path to call.
-     * @param  payload				The string representation of the request body.
+     * @param  path                    The full api path to call.
+     * @param  payload                The string representation of the request body.
      * @return HTTPResponse
      */
     public HTTPResponse post(String path, String payload)
@@ -139,8 +139,8 @@ global class DeskClient
     
     /**
      * HTTP PATCH Request methods
-     * @param  path					The full api path to call.
-     * @param  payload				The string representation of the request body.
+     * @param  path                    The full api path to call.
+     * @param  payload                The string representation of the request body.
      * @return HTTPResponse
      */
     public HTTPResponse patch(String path, String payload)
@@ -150,15 +150,15 @@ global class DeskClient
     
     /**
      * HTTP DELETE Request methods
-     * @param  path					The full api path to call.
+     * @param  path                    The full api path to call.
      * @return HTTPResponse
      */
     public HTTPResponse destroy(String path) { return this.request('DELETE', path); }
     
     /**
      * Different signature for the request method.
-     * @param  method				The method to call.
-     * @param  path					The full api path to call.
+     * @param  method                The method to call.
+     * @param  path                    The full api path to call.
      * @return HTTPResponse
      */
     public HTTPResponse request(String method, String path)
@@ -168,9 +168,9 @@ global class DeskClient
     
     /**
      * Sends off the actual request.
-     * @param  method				The method to call.
-     * @param  path					The full api path to call.
-     * @param  payload				The string representation of the request body.
+     * @param  method                The method to call.
+     * @param  path                    The full api path to call.
+     * @param  payload                The string representation of the request body.
      * @return HTTPResponse
      */
     public HTTPResponse request(String method, String path, String payload)
@@ -217,7 +217,7 @@ global class DeskClient
     
     /**
      * Takes a parameter string and returns a map.
-     * @param  paramString				Parameter string delimited by & and = signs.
+     * @param  paramString                Parameter string delimited by & and = signs.
      * @return Map<String, String>
      */
     private Map<String, String> getParams(String paramString)
@@ -238,7 +238,7 @@ global class DeskClient
     
     /**
      * Adds the Basic Auth header to the request.
-     * @param  req						The request that needs to be authorized.
+     * @param  req                        The request that needs to be authorized.
      * @return HTTPRequest
      */
     private HTTPRequest basicAuthentication(HTTPRequest req)
@@ -252,7 +252,7 @@ global class DeskClient
     
     /**
      * Adds the OAuth header to the request.
-     * @param  req						The request that needs to be authorized.
+     * @param  req                        The request that needs to be authorized.
      * @return HTTPRequest
      */
     private HTTPRequest signRequest(HTTPRequest req)

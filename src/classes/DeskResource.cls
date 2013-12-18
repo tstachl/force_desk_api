@@ -9,79 +9,79 @@
 global class DeskResource
 {
     /**
-	 * The links object.
-	 */
+     * The links object.
+     */
     public Map<String, Object> links    = new Map<String, Object>();
     
     /**
-	 * The resource fields.
-	 */
+     * The resource fields.
+     */
     public Map<String, Object> fields   = new Map<String, Object>();
     
     /**
-	 * The local changes not persistent.
-	 */
+     * The local changes not persistent.
+     */
     public Map<String, Object> changes  = new Map<String, Object>();
     
     /**
-	 * The embedded resources object.
-	 */
+     * The embedded resources object.
+     */
     public Map<String, Object> embedded = new Map<String, Object>();
     
     /**
-	 * The flag indicating if the resource is loaded from the server.
-	 */
+     * The flag indicating if the resource is loaded from the server.
+     */
     private Boolean loaded = false;
     
     /**
-	 * The client used for transactions.
-	 */
+     * The client used for transactions.
+     */
     private DeskClient client;
     
     /**
-	 * Instantiates a new (empty) DeskResource.
-	 */
+     * Instantiates a new (empty) DeskResource.
+     */
     public DeskResource() { this(new Map<String, Object>(), null, false); }
     
     /**
-	 * Instantiates a new (empty) DeskResource and sets the client.
-	 * @param  client				The client to use for transactions.
-	 */
+     * Instantiates a new (empty) DeskResource and sets the client.
+     * @param  client                The client to use for transactions.
+     */
     public DeskResource(DeskClient client)
     {
         this(new Map<String, Object>(), client, false);
     }
     
     /**
-	 * Instantiates a new DeskResource from a JSON string without a client.
-	 * @param  jsonString			The JSON string to set up.
-	 */
+     * Instantiates a new DeskResource from a JSON string without a client.
+     * @param  jsonString            The JSON string to set up.
+     */
     public DeskResource(String jsonString) { this(jsonString, null, false); }
     
     /**
-	 * Instantiates a new DeskResource from a JSON string with a client.
-	 * @param  jsonString			The JSON string to set up.
-	 * @param  client				The client to use for transactions.
-	 */
+     * Instantiates a new DeskResource from a JSON string with a client.
+     * @param  jsonString            The JSON string to set up.
+     * @param  client                The client to use for transactions.
+     */
     public DeskResource(String jsonString, DeskClient client) { this(jsonString, client, false); }
     
     /**
-	 * Instantiates a new DeskResource from a JSON string with a client.
-	 * @param  jsonString			The JSON string to set up.
-	 * @param  client				The client to use for transactions.
-	 * @param  loaded				Indicates whether it was loaded from the API or not. 
-	 */
+     * Instantiates a new DeskResource from a JSON string with a client.
+     * @param  jsonString            The JSON string to set up.
+     * @param  client                The client to use for transactions.
+     * @param  loaded                Indicates whether it was loaded from the API or not. 
+     */
     public DeskResource(String jsonString, DeskClient client, Boolean loaded)
     {
         this((Map<String, Object>)JSON.deserializeUntyped(jsonString), client, loaded);
     }
     
     /**
-	 * Instantiates a new DeskResource from a JSON string with a client.
-	 * @param  jsonMap				The JSON string converted to an untyped map.
-	 * @param  client				The client to use for transactions.
-	 * @param  loaded				Indicates whether it was loaded from the API or not. 
-	 */
+     * Instantiates a new DeskResource from a JSON string with a client.
+     * @param  jsonMap                The JSON string converted to an untyped map.
+     * @param  client                The client to use for transactions.
+     * @param  loaded                Indicates whether it was loaded from the API or not. 
+     */
     public DeskResource(Map<String, Object> jsonMap, DeskClient client, Boolean loaded)
     {
         this.client = client;
@@ -90,10 +90,10 @@ global class DeskResource
     }
     
     /**
-	 * Generic getter returns fields, links and embedded resources.
-	 * @param  key					The name of the field/embedded/link resource.
-	 * @return Object
-	 */
+     * Generic getter returns fields, links and embedded resources.
+     * @param  key                    The name of the field/embedded/link resource.
+     * @return Object
+     */
     public Object get(String key)
     {
         if (this.fields.containsKey(key)) {
@@ -110,10 +110,10 @@ global class DeskResource
     }
     
     /**
-	 * Getter for resources, will lookup links and embedded resources.
-	 * @param  key					The name of the embedded/link resource.
-	 * @return DeskResource
-	 */
+     * Getter for resources, will lookup links and embedded resources.
+     * @param  key                    The name of the embedded/link resource.
+     * @return DeskResource
+     */
     public DeskResource getResource(String key)
     {
         if (this.embedded.containsKey(key) && this.embedded.get(key) instanceof DeskResource)
@@ -125,9 +125,9 @@ global class DeskResource
     }
     
     /**
-	 * If this is a page resource `getEntries' would return the list of resources.
-	 * @return List<DeskResource>
-	 */
+     * If this is a page resource `getEntries' would return the list of resources.
+     * @return List<DeskResource>
+     */
     public List<DeskResource> getEntries()
     {
         if (this.embedded.containsKey('entries'))
@@ -137,10 +137,10 @@ global class DeskResource
     }
     
     /**
-	 * Setter only works on fields.
-	 * @param  key					The name of the field.
-	 * @param  value				The value the field should be set to.
-	 */
+     * Setter only works on fields.
+     * @param  key                    The name of the field.
+     * @param  value                The value the field should be set to.
+     */
     public void set(String key, Object value)
     {
         if (this.fields.containsKey(key)) {
@@ -149,10 +149,10 @@ global class DeskResource
     }
     
     /**
-	 * Creates a new desk resource.
-	 * @param  params				A map with params for the new resource.
-	 * @return DeskResource
-	 */
+     * Creates a new desk resource.
+     * @param  params                A map with params for the new resource.
+     * @return DeskResource
+     */
     public DeskResource create(Map<String, Object> params)
     {
         return new DeskResource(
@@ -162,10 +162,10 @@ global class DeskResource
     }
     
     /**
-	 * Updates the current desk resource.
-	 * @param  params				A map with params for the new resource.
-	 * @return DeskResource
-	 */
+     * Updates the current desk resource.
+     * @param  params                A map with params for the new resource.
+     * @return DeskResource
+     */
     public DeskResource patch(Map<String, Object> params)
     {
         this.changes.putAll(params);
@@ -175,19 +175,19 @@ global class DeskResource
     }
     
     /**
-	 * Deletes the current desk resource.
-	 * @return Boolean
-	 */
+     * Deletes the current desk resource.
+     * @return Boolean
+     */
     public Boolean destroy()
     {
         return this.client.destroy(this.getHref()).getStatusCode() == 204;
     }
     
     /**
-	 * Searches the current desk resources base object.
-	 * @param  params				A string for the full text search.
-	 * @return DeskResource
-	 */
+     * Searches the current desk resources base object.
+     * @param  params                A string for the full text search.
+     * @return DeskResource
+     */
     public DeskResource search(String params)
     {
         return this.search(new Map<String, String>{
@@ -196,10 +196,10 @@ global class DeskResource
     }
     
     /**
-	 * Searches the current desk resources base object.
-	 * @param  params				A map of search params.
-	 * @return DeskResource
-	 */
+     * Searches the current desk resources base object.
+     * @param  params                A map of search params.
+     * @return DeskResource
+     */
     public DeskResource search(Map<String, String> params)
     {
         PageReference uri = new PageReference(this.cleanBaseUrl() + '/search');
@@ -208,54 +208,54 @@ global class DeskResource
     }
     
     /**
-	 * Finds a specific desk resource on the current desk resources base object.
-	 * @param  id					The id of the resource.
-	 * @return DeskResource
-	 */
+     * Finds a specific desk resource on the current desk resources base object.
+     * @param  id                    The id of the resource.
+     * @return DeskResource
+     */
     public DeskResource find(Integer id) { return this.find(String.valueOf(id)); }
 
-	/**
-	 * Finds a specific desk resource and embeds subresources.
-	 * @param  id					The id of the resource.
-	 * @param  embedds				Comma delimited list of sub resources to embed.
-	 * @return DeskResource
-	 */
-	public DeskResource find(Integer id, String embedds) { return this.find(String.valueOf(id), embedds); }
+    /**
+     * Finds a specific desk resource and embeds subresources.
+     * @param  id                    The id of the resource.
+     * @param  embedds                Comma delimited list of sub resources to embed.
+     * @return DeskResource
+     */
+    public DeskResource find(Integer id, String embedds) { return this.find(String.valueOf(id), embedds); }
 
     /**
-	 * Finds a specific desk resource on the current desk resources base object.
-	 * @param  id					The id of the resource.
-	 * @return DeskResource
-	 */
+     * Finds a specific desk resource on the current desk resources base object.
+     * @param  id                    The id of the resource.
+     * @return DeskResource
+     */
     public DeskResource find(String id)
     {
-    	return this.findByPath(this.cleanBaseUrl() + '/' + id).exec();
+        return this.findByPath(this.cleanBaseUrl() + '/' + id).exec();
     }
     
-	/**
-	 * Finds a specific desk resource and embeds subresources.
-	 * @param  id					The id of the resource.
-	 * @param  embedds				Comma delimited list of sub resources to embed.
-	 * @return DeskResource
-	 */
-	public DeskResource find(String id, String embedds)
-	{
-		return this.findByPath(this.cleanBaseUrl() + '/' + id + '?embed=' + embedds).exec();
-	}
+    /**
+     * Finds a specific desk resource and embeds subresources.
+     * @param  id                    The id of the resource.
+     * @param  embedds                Comma delimited list of sub resources to embed.
+     * @return DeskResource
+     */
+    public DeskResource find(String id, String embedds)
+    {
+        return this.findByPath(this.cleanBaseUrl() + '/' + id + '?embed=' + embedds).exec();
+    }
     
     /**
-     * @param  path					The full api path to the resource.
+     * @param  path                    The full api path to the resource.
      * @return DeskResource
      */
     public DeskResource findByPath(String path)
     {
-    	return this.client.findByPath(path);
+        return this.client.findByPath(path);
     }
     
     /**
-	 * Returns the current page number.
-	 * @return Integer
-	 */
+     * Returns the current page number.
+     * @return Integer
+     */
     public Integer page()
     {
         if (!this.getQueryParams().containsKey('page')) { this.exec(); }
@@ -266,10 +266,10 @@ global class DeskResource
     }
     
     /**
-	 * Sets the current page number.
-	 * @param  p					The page to be fetched.
-	 * @return DeskResource
-	 */
+     * Sets the current page number.
+     * @param  p                    The page to be fetched.
+     * @return DeskResource
+     */
     public DeskResource page(Integer p)
     {
         this.setHref(new Map<String, String>{ 'page' => String.valueOf(p) });
@@ -277,9 +277,9 @@ global class DeskResource
     }
     
     /**
-	 * Returns the current perPage number.
-	 * @return Integer
-	 */
+     * Returns the current perPage number.
+     * @return Integer
+     */
     public Integer perPage()
     {
         if (!this.getQueryParams().containsKey('per_page')) { this.exec(); }
@@ -290,10 +290,10 @@ global class DeskResource
     }
     
     /**
-	 * Sets the current perPage number.
-	 * @param  p					The number of records on a page to be fetched.
-	 * @return DeskResource
-	 */
+     * Sets the current perPage number.
+     * @param  p                    The number of records on a page to be fetched.
+     * @return DeskResource
+     */
     public DeskResource perPage(Integer p)
     {
         this.setHref(new Map<String, String>{ 'per_page' => String.valueOf(p) });
@@ -302,7 +302,7 @@ global class DeskResource
     
     /**
      * Allows you to embed subresources in the main request.
-     * @param  embedds				A comma separated list of resources to embed.
+     * @param  embedds                A comma separated list of resources to embed.
      * @return DeskResource
      */
     public DeskResource embed(String embedds)
@@ -312,19 +312,19 @@ global class DeskResource
     }
     
     /**
-	 * Executes a load on the current resource if not loaded.
-	 * @return DeskResource
-	 */
+     * Executes a load on the current resource if not loaded.
+     * @return DeskResource
+     */
     public DeskResource exec()
     {
         return this.exec(false);
     }
     
     /**
-	 * Executes a load on the current resource if not loaded or reload is true.
-	 * @param  reload				Indicates whether you want to force a reload.
-	 * @return DeskResource
-	 */
+     * Executes a load on the current resource if not loaded or reload is true.
+     * @param  reload                Indicates whether you want to force a reload.
+     * @return DeskResource
+     */
     public DeskResource exec(Boolean reload)
     {
         if (!this.loaded || (this.loaded && reload)) {
@@ -335,27 +335,27 @@ global class DeskResource
     }
     
     /**
-	 * Returns the current href link.
-	 * @return String
-	 */
+     * Returns the current href link.
+     * @return String
+     */
     public String getHref()
     {
         return (String)this.getSelf().get('href');
     }
     
     /**
-	 * Returns the current self map.
-	 * @return Map<String, Object>
-	 */
+     * Returns the current self map.
+     * @return Map<String, Object>
+     */
     public Map<String, Object> getSelf()
     {
-    	return (Map<String, Object>)this.get('self');
+        return (Map<String, Object>)this.get('self');
     }
     
     /**
-	 * Returns the url of the current resources base object.
-	 * @return String
-	 */
+     * Returns the url of the current resources base object.
+     * @return String
+     */
     private String cleanBaseUrl()
     {
         URL uri = new URL(this.client.endpoint + this.getHref());
@@ -363,9 +363,9 @@ global class DeskResource
     }
     
     /**
-	 * Changes the href of the current resource.
-	 * @param  params				A map of parameters for the current resource href.
-	 */
+     * Changes the href of the current resource.
+     * @param  params                A map of parameters for the current resource href.
+     */
     private void setHref(Map<String, String> params)
     {
         PageReference uri = new PageReference(this.getHref());
@@ -373,17 +373,17 @@ global class DeskResource
         uri.getParameters().putAll(params);
         // only change link if params have changed
         if (oldParams != uri.getParameters()) {
-        	Map<String, Object> href = new Map<String, Object>();
-	        href.put('href', uri.getUrl());
-        	this.links.put('self', href);
-        	this.loaded = false;
+            Map<String, Object> href = new Map<String, Object>();
+            href.put('href', uri.getUrl());
+            this.links.put('self', href);
+            this.loaded = false;
         }
     }
     
     /**
-	 * Returns query parameters for the current href.
-	 * @return Map<String, String>
-	 */
+     * Returns query parameters for the current href.
+     * @return Map<String, String>
+     */
     private Map<String, String> getQueryParams()
     {
         PageReference uri = new PageReference(this.getHref());
@@ -391,16 +391,16 @@ global class DeskResource
     }
     
     /**
-	 * Sets up a resource from a json string.
-	 */
+     * Sets up a resource from a json string.
+     */
     private void setup(String jsonString)
     {
         this.setup((Map<String, Object>)JSON.deserializeUntyped(jsonString));
     }
     
     /**
- 	 * Sets up a resource from a map.
-	 */
+      * Sets up a resource from a map.
+     */
     private void setup(Map<String, Object> jsonMap)
     {
         for (String key : jsonMap.keySet()) {
