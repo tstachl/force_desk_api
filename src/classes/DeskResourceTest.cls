@@ -159,4 +159,23 @@ public class DeskResourceTest
         System.assertEquals(res.page(), null);
         System.assertEquals(res.perPage(), null);
     }
+    
+    public static testMethod void embedTest()
+    {
+        DeskClient client = new DeskClient(new Map<String, String>{
+            'username' => 'un',
+            'password' => 'pw',
+            'subdomain' => 'devel'
+        });
+        
+        Test.setMock(HttpCalloutMock.class, new DeskClientMock());
+        DeskResource res = client.getResource('cases').page(1).perPage(1).embed('customer').getEntries().get(0).getResource('customer');
+        System.assertEquals((String)res.get('first_name'), 'Thomas');
+        System.assertEquals(res.getHref(), '/api/v2/customers/37823480');
+        
+        res = client.getResource('cases').find(3011, 'customer,message');
+        System.assertEquals((Integer)res.get('priority'), 9);
+        System.assertEquals((String)res.getResource('customer').get('first_name'), 'Thomas');
+        System.assertEquals((String)res.getResource('message').get('direction'), 'in');
+    }
 }

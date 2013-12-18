@@ -214,6 +214,14 @@ global class DeskResource
 	 */
     public DeskResource find(Integer id) { return this.find(String.valueOf(id)); }
 
+	/**
+	 * Finds a specific desk resource and embeds subresources.
+	 * @param  id					The id of the resource.
+	 * @param  embedds				Comma delimited list of sub resources to embed.
+	 * @return DeskResource
+	 */
+	public DeskResource find(Integer id, String embedds) { return this.find(String.valueOf(id), embedds); }
+
     /**
 	 * Finds a specific desk resource on the current desk resources base object.
 	 * @param  id					The id of the resource.
@@ -223,6 +231,17 @@ global class DeskResource
     {
     	return this.findByPath(this.cleanBaseUrl() + '/' + id).exec();
     }
+    
+	/**
+	 * Finds a specific desk resource and embeds subresources.
+	 * @param  id					The id of the resource.
+	 * @param  embedds				Comma delimited list of sub resources to embed.
+	 * @return DeskResource
+	 */
+	public DeskResource find(String id, String embedds)
+	{
+		return this.findByPath(this.cleanBaseUrl() + '/' + id + '?embed=' + embedds).exec();
+	}
     
     /**
      * @param  path					The full api path to the resource.

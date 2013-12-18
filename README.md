@@ -5,7 +5,7 @@ desk.com has released v2 of their REST API a few months ago and provides a lot m
 ## Example
 This example shows you how to create a new client and establish a connection to the API. It shows the four request methods supported by the desk.com API (`GET`, `POST`, `PATCH` and `DELETE`).
 
-```
+```apex
 // Basic Auth
 DeskClient client = new DeskClient(new Map<String, String>{
   'username' => 'thomas@example.com',
@@ -32,19 +32,19 @@ rsp = client.destroy('/api/v2/topics/1');
 
 ## Working with Resources and Collections
 
-The API supports RESTful resources and so does this wrapper. These resources are automatically discovered, meaning you can navigate around without having to worry about anything.
+The API supports RESTful resources and so does this wrapper. These resources are automatically discovered, meaning you can navigate around without having to worry about anything. We also support two finder methods `findByPath()` and `find()`.
 
 ### Initial Collection
 
 Using the client we created earlier you can easily request the initial collection you want to work with.
 
-```
+```apex
 DeskResource res = client.getResource('cases');
 ```
 
 ### Finders
 
-The method `find` can be called on all `DeskResource` instances and will return a lazy loaded instance of the resource. _Gotcha:_ It will rebuild the base path based on the resource/collection it is called on. So if you call it on the cases collection `client.getResource('cases').find(1)` the path will look like this: `/api/v2/cases/:id`.
+The method `find()` can be called on all `DeskResource` instances and will return a lazy loaded instance of the resource. _Gotcha:_ It will rebuild the base path based on the resource/collection it is called on. So if you call it on the cases collection `client.getResource('cases').find(1)` the path will look like this: `/api/v2/cases/:id`. The second method `findByPath()` can be called on all `DeskResource` and `DeskClient` instances.
 
 | Method                                                                           | Path                        |
 | -------------------------------------------------------------------------------- | --------------------------- |
@@ -56,7 +56,7 @@ The method `find` can be called on all `DeskResource` instances and will return 
 
 As mentioned above you can also navigate between resources and pages of collections. However you'll have to request the `entries` before you can loop through all the records on the page.
 
-```
+```apex
 DeskResource cases = client.getResource('cases');
 for (DeskResource myCase : cases.getEntries()) {
   // do something with the case
@@ -82,7 +82,7 @@ DeskResource firstPage = lastPage.getResource('first');
 
 Pagination is pretty obvious but the cool part about pagination or rather resources is the auto-linking. As soon as the resource has a link defined, it'll be navigatable:
 
-```
+```apex
 // get the customer of the first case of the first page
 DeskResource customer = client.getResource('cases').getEntries().get(0).getResource('customer');
 ```
@@ -91,7 +91,7 @@ DeskResource customer = client.getResource('cases').getEntries().get(0).getResou
 
 Collections and resources in general are lazily loaded, meaning if you request the cases `client.getResource('cases')` no actual request will be set off until you actually request data. Only necessary requests are sent which will keep the request count low - [desk.com rate limit](http://dev.desk.com/API/using-the-api/#rate-limits).
 
-```
+```apex
 DeskResource cases = client.getResource('cases').page(10).perPage(50);
 for (DeskResource myCase : cases.getEntries()) {
   // in this method chain `getEntries' is the first method that acutally sends a request
@@ -108,17 +108,20 @@ APIv2 has a lot of great new features but the one I'm most excited about is side
 
 Of course we had to bring this awesomeness into the API wrapper as soon as possible, so here you go:
 
-```
-// fetch cases with their respective customers
-DeskResource cases = client.getResource('cases').embed('customer');
+```apex
+// fetch cases with their respective customers and cases
+DeskResource cases = client.getResource('cases').embed('customer,message');
 DeskResource customer = cases.getEntries().get(0).getResource('customer');
+// fetch a sepcific case with it's assigned user and group
+DeskResource myCase = client.getResource('cases').find(3011, 'assigned_user,assigned_group');
+DeskResource assignedUser = myCase.getResource('assigned_user');
 ```
 
 ### Create, Update and Delete
 
 Of course we support creating, updating and deleting resources but not all resources can be deleted or updated or created, if that's the case for the resource you're trying to update, it'll throw a `DeskApi::Error::MethodNotAllowed` error. For ease of use and because we wanted to build as less business logic into the wrapper as possible, all of the methods are defined on each `DeskApi::Resource` and will be sent to desk.com. However the API might respond with an error if you do things that aren't supported.
 
-```
+```apex
 // let's create an article
 DeskResource newArticle = client.getResource('articles').create(new Map<String, Object>{
   'subject' => 'Some Subject',
@@ -145,7 +148,7 @@ if (updatedArticle.destroy()) {
 
 As you have seen in prior examples we use the `getResource' getter to get links and embedded resources. For fields you can use `get' and `set' however you'll have to typecast the return value.
 
-```
+```apex
 DeskResource customer = client.getResource('customers').find(1);
 
 System.debug(customer.get('first_name'));
