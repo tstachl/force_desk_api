@@ -205,7 +205,15 @@ global class DeskClient
         req = this.signRequest(req);
         
         HTTP client = new HTTP();
-        HTTPResponse rsp = client.send(req);
+        HTTPResponse rsp;
+
+        // Use an internal Mock because SFDC doesn't support Mocks in Batch Apex
+        if (Test.isRunningTest() && mock != null) {
+            rsp = mock.respond(req);
+        }
+        else {
+            rsp = client.send(req);
+        }
         
         //Helpful debug messages
         System.debug(rsp.getBody());
@@ -213,6 +221,24 @@ global class DeskClient
         System.debug('STATUS_CODE:' + rsp.getStatusCode());
         
         return rsp;
+    }
+
+    private HttpCalloutMock mock;
+
+    /**
+     * Takes a HttpCalloutMock and returns nothing.
+     * This is to make up for the fact that Http requests fail from Batches in
+     * a test class even when using the standard Test.setMock() method.
+     * @param  HttpCalloutMock                The mock responses that should be used internally
+     * @return void
+     */
+    public void setMock(HttpCalloutMock mock) {
+        if (Test.isRunningTest()) {
+            this.mock = mock;
+        }
+        else {
+            throw new ConfigurationException('Cannot set a Mock when not running a test');
+        }
     }
     
     /**

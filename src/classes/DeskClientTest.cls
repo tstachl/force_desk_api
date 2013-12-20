@@ -200,4 +200,18 @@ public class DeskClientTest
         Map<String, Object> users = (Map<String, Object>)JSON.deserializeUntyped(client.get('/api/v2/users?page=1&per_page=100').getBody());
         System.assertEquals((Integer)users.get('total_entries'), 6);
     }
+
+    public static testMethod void internalMockTest()
+    {
+        DeskClient client = new DeskClient(new Map<String, String>{
+            'username' => 'un',
+            'password' => 'pw',
+            'subdomain' => 'devel'
+        });
+
+        // Set the internal Mock
+        client.setMock(new DeskClientMock());
+        Map<String, Object> currUser = (Map<String, Object>)JSON.deserializeUntyped(client.get('/api/v2/users/current').getBody());
+        System.assertEquals((String)currUser.get('name'), 'Thomas Stachl');
+    }
 }
