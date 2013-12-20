@@ -236,9 +236,6 @@ global class DeskClient
         if (Test.isRunningTest()) {
             this.mock = mock;
         }
-        else {
-            throw new ConfigurationException('Cannot set a Mock when not running a test');
-        }
     }
     
     /**
